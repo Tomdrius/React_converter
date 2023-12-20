@@ -1,17 +1,20 @@
-from flask import Flask, jsonify, request
-from flask_cors import CORS
 import os
 import requests
+
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+
+from typing import Dict, Any, Optional
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 @app.route('/', methods=['GET'])
-def home():
+def home() -> str:
     return "Hello, this is the backend!"
 
 @app.route('/exchange-rates', methods=['GET'])
-def get_exchange_rates():
+def get_exchange_rates() -> Dict[str, float]:
     try:
         response = requests.get("https://api.nbp.pl/api/exchangerates/tables/A/")
         data = response.json()
@@ -22,11 +25,11 @@ def get_exchange_rates():
         return jsonify({"error": str(e)}), 500
 
 @app.route('/convert', methods=['POST'])
-def convert_currency():
+def convert_currency() -> Dict[str, Any]:
     try:
         data = request.get_json()
-        target_currency = data.get('targetCurrency')
-        amount = data.get('amount')
+        target_currency: Optional[str] = data.get('targetCurrency')
+        amount: float = data.get('amount')
 
         if not target_currency or not amount:
             raise ValueError("Missing required parameters")
@@ -48,7 +51,7 @@ def convert_currency():
         return jsonify({"error": str(e)}), 500
 
 @app.after_request
-def after_request(response):
+def after_request(response) -> requests.Response:
     response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     return response

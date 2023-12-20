@@ -38,7 +38,7 @@ const App = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/exchange-rates'); // || 'http://ccbackend:5000/exchange-rates'
+        const response = await axios.get('http://localhost:5000/exchange-rates');
         const data = await response.data;
         const euroRate = data['EUR'];
         const usdRate = data['USD'];
