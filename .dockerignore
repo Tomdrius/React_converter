@@ -1,0 +1,19 @@
+# Node.js
+node_modules/
+
+# React
+build/
+dist/
+
+# Environment file
+p9
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Temporary files
+*.tmp
+*.log
+*.swp

@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  backend:
+    image: ccbackend:first
+    ports:
+      - 5000:5000
+    environment:
+      FLASK_RUN_HOST: 0.0.0.0
+    networks:
+      - my_network
+
+  frontend:
+    image: ccfrontend:second
+    ports:
+      - 3000:3000
+    environment:
+      REACT_APP_API_URL: http://ccbackend:5000
+    networks:
+      - my_network
+
+networks:
+  my_network:

@@ -1,7 +1,7 @@
 This project is a currency converter. It consists of two parts:
 
 App.js - a React component that displays the user interface.
-Backend.py - a Flask application that provides currency exchange rates.
+Backend.py - a Flask application that provides currency rates.
 
 Running
 
@@ -9,7 +9,7 @@ Create and activate a virtual environment:
 python3 -m venv nbp
 source nbp/bin/activate
 
-Install dependencies:
+Install the dependencies:
 pip install -r requirements.txt
 
 Run the Flask application:
@@ -19,20 +19,22 @@ Run the React application:
 npm install
 npm start
 
-The application will be available at http://localhost:3000 (frontend) and http://localhost:5000 (backend).
+The application will be available at http://localhost:3000 (frontend), and also at http://localhost:5000 (backend).
 
-Running in a Docker container
+Creating containers using Docker
 
-The application can also be run in a Docker container. To do this, create a Docker image by running the following command:
-
+Build the container for the backend (Flask):
 docker build -t ccbackend:first . -f Dockerfile.python
+
+Build the container for the frontend (React):
 docker build -t ccfrontend:second . -f Dockerfile.node
-Then, run the Docker container by running the following command:
 
+Run both containers:
 docker compose up
-The application will be available at http://localhost:3000 and http://localhost:5000.
 
-==========================================================
+The application will be available at the previously mentioned addresses.
+
+=======================================================
 
 Ten projekt to konwerter walut. Składa się z dwóch części:
 
@@ -58,13 +60,15 @@ npm start
 Aplikacja będzie dostępna pod adresem http://localhost:3000 (frontend),
 a także pod adresem http://localhost:5000 (backend).
 
-Aplikację można również uruchomić w kontenerze Dockera. Aby to zrobić, utwórz obraz Dockera, wykonując następujące polecenie:
+Tworzenie kontenerów za pomocą Dockera
 
+Zbuduj kontener dla backendu (Flask):
 docker build -t ccbackend:first . -f Dockerfile.python
+
+Zbuduj kontener dla frontendu (React):
 docker build -t ccfrontend:second . -f Dockerfile.node
 
-Następnie uruchom kontener Dockera, wykonując następujące polecenie:
-
+Uruchom oba kontenery:
 docker compose up
 
-Aplikacja będzie dostępna pod adresem http://localhost:3000 i http://localhost:5000.
+Aplikacja będzie dostępna pod wcześniej wspomnianymi adresami.
