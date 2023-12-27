@@ -35,7 +35,9 @@ docker compose up
 The application will be available at the previously mentioned addresses.
 
 Database:
-The project uses a PostgreSQL database to store exchange rates. The database is automatically created when the application is run locally.
+The project uses a PostgreSQL database to store exchange rates. The database is automatically created when the application is run locally. To manually create the database, run the loggingDB.py file.
+
+
 
 Rates saving:
 Exchange rates are automatically fetched from the NBP API and saved to the database every 10 minutes.
@@ -83,7 +85,7 @@ docker compose up
 Aplikacja będzie dostępna pod wcześniej wspomnianymi adresami.
 
 Baza danych:
-Projekt korzysta z bazy danych PostgreSQL do przechowywania kursów walut. Baza danych jest automatycznie tworzona, gdy aplikacja jest uruchamiana lokalnie.
+Projekt korzysta z bazy danych PostgreSQL do przechowywania kursów walut. Baza danych jest automatycznie tworzona, gdy aplikacja jest uruchamiana lokalnie. Można ją ręcznie utworzyć uruchamiająć plik loggingDB.py.
 
 Zapisywanie kursów:
 Kursy walut są automatycznie pobierane z API NBP i zapisywane do bazy danych co 10 minut.
