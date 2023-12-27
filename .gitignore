@@ -9,3 +9,5 @@ p9
 .env
 start.sh
 webpack.config.js
+*end2.py
+*end3.py

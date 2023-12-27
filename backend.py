@@ -1,8 +1,6 @@
-import logging
 import os
 import time
 import threading
-import traceback
 from dotenv import load_dotenv
 
 from flask import Flask, jsonify, request
@@ -13,7 +11,6 @@ import schedule
 
 load_dotenv()
 
-logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
@@ -128,7 +125,7 @@ def convert():
     except KeyError as ke:
         return jsonify({"error": f"KeyError: {str(ke)}"}), 500
     except Exception as e:
-        return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
+        return jsonify({"error": str(e)}), 500
 
 
 @app.after_request
@@ -142,4 +139,4 @@ if __name__ == '__main__':
     host = os.getenv('FLASK_RUN_HOST', 'localhost')
     port = int(os.getenv('FLASK_RUN_PORT', 5000))
 
-    app.run(debug=True, host=host, port=port)
+    app.run(debug=False, host=host, port=port)

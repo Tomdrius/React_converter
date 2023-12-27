@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 for key in ['DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME']:
     if not os.getenv(key):
-        raise Exception(f"Zmienna środowiskowa {key} nie jest ustawiona")
+        raise Exception(f"Environment variable {key} is not set")
 try:
     connection = psycopg2.connect(
         host=os.getenv('DB_HOST', 'localhost'),
@@ -19,21 +19,19 @@ try:
     data = cursor.fetchone()
 
     if data is not None:
-        print('Połączenie z bazą danych zostało nawiązane pomyślnie.')
+        print('Database connection established successfully.')
 
-        # Sprawdź, czy użytkownik może się zalogować
         cursor.execute("SELECT rolname FROM pg_roles WHERE rolname = %s", (os.getenv('DB_USER'),))
         user_data = cursor.fetchone()
         user = os.getenv('DB_USER')
         if user_data is not None:
-            print(f'Użytkownik {user} istnieje w bazie danych.')
+            print(f'User {user} exists in the database.')
         else:
-            print('Użytkownik NIE istnieje w bazie danych.')
+            print('User DOES NOT exist in the database.')
 
     else:
-        print('Nie udało się połączyć z bazą danych.')
+        print('Failed to connect to the database.')
 
     connection.close()
 except Exception as e:
-    print(f'Błąd podczas łączenia z bazą danych: {str(e)}')
-
+    print(f'Error while connecting to the database: {str(e)}')
