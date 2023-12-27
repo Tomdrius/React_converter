@@ -1,4 +1,3 @@
-import logging
 import os
 import time
 import threading
@@ -7,21 +6,38 @@ from dotenv import load_dotenv
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import psycopg2
+from sqlalchemy import create_engine, Column, Float, Integer, String, text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 import requests
 import schedule
 
 load_dotenv()
 
-logging.basicConfig(level=logging.DEBUG)
-
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+
+Base = declarative_base()
+
+class ExchangeRate(Base):
+    __tablename__ = 'exchange_rates'
+
+    id = Column(Integer, primary_key=True)
+    currency = Column(String(3), nullable=False)
+    rate = Column(Float, nullable=False)
+
+engine = create_engine(
+    f"postgresql://{os.getenv('DB_USER', 'DB_USER')}:{os.getenv('DB_PASSWORD', 'DB_PASSWORD')}@"
+    f"{os.getenv('DB_HOST', 'localhost')}:{os.getenv('DB_PORT', 5432)}/{os.getenv('DB_NAME', 'DB_NAME')}"
+)
+
+Base.metadata.create_all(engine)
+
+Session = sessionmaker(bind=engine)
 
 @app.route('/', methods=['GET'])
 def home():
     return "Hello, this is the backend!"
-
 
 def fetch_and_save_data():
     try:
@@ -29,24 +45,15 @@ def fetch_and_save_data():
         data = response.json()
 
         rates = {rate['code']: rate['mid'] for rate in data[0]['rates'] if rate['code'] in ['USD', 'EUR']}
-        
-        connection = psycopg2.connect(
-            host=os.getenv('FLASK_RUN_HOST', 'localhost'),
-            port=int(os.getenv('DB_PORT', 5432)),
-            user=os.getenv('DB_USER', 'DB_USER'),
-            password=os.getenv('DB_PASSWORD', 'DB_PASSWORD'),
-            database=os.getenv('DB_NAME', 'DB_NAME'),
-        )
 
-        cursor = connection.cursor()
-        cursor.execute('CREATE TABLE IF NOT EXISTS exchange_rates (id SERIAL PRIMARY KEY, currency VARCHAR(3) NOT NULL, rate FLOAT NOT NULL);')
+        session = Session()
 
         for currency, rate in rates.items():
-            cursor.execute("INSERT INTO exchange_rates (currency, rate) VALUES (%s, %s)", (currency, rate))
-        connection.commit()
+            new_rate = ExchangeRate(currency=currency, rate=rate)
+            session.add(new_rate)
 
-        cursor.close()
-        connection.close()
+        session.commit()
+        session.close()
 
     except Exception as e:
         print(f"Błąd podczas pobierania i zapisywania danych: {str(e)}")
@@ -64,33 +71,13 @@ schedule_thread.start()
 @app.route('/exchange-rates', methods=['GET'])
 def get_exchange_rates():
     try:
-        response = requests.get("https://api.nbp.pl/api/exchangerates/tables/A/")
-        data = response.json()
-        rates = {rate['code']: rate['mid'] for rate in data[0]['rates'] if rate['code'] in ['USD', 'EUR']}
+        session = Session()
+        rates = session.query(ExchangeRate.currency, ExchangeRate.rate).all()
+        session.close()
 
+        rates_dict = {currency: rate for currency, rate in rates}
+        return rates_dict
 
-        connection = psycopg2.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            port=int(os.getenv('DB_PORT', 5432)),
-            user=os.getenv('DB_USER', 'DB_USER'),
-            password=os.getenv('DB_PASSWORD', 'DB_PASSWORD'),
-            database=os.getenv('DB_NAME', 'DB_NAME'),
-        )
-        cursor = connection.cursor()   
-        cursor.execute('CREATE TABLE IF NOT EXISTS exchange_rates (id SERIAL PRIMARY KEY, currency VARCHAR(3) NOT NULL, rate FLOAT NOT NULL);')
-
-        for currency, rate in rates.items():
-            cursor.execute("INSERT INTO exchange_rates (currency, rate) VALUES (%s, %s)", (currency, rate))
-
-        connection.commit()
-        cursor.execute("SELECT currency, rate FROM exchange_rates")
-        data = cursor.fetchall()
-
-        cursor.close()
-        connection.close()
-
-        rates = {currency: rate for currency, rate in data}
-        return rates
     except Exception as e:
         print(f"Error in get_exchange_rates: {str(e)}")
         return {}
@@ -106,7 +93,7 @@ def convert_currency(target_currency: str, amount: float) -> float:
 
         result = amount * rate_target
         return result
-    
+
     except Exception as e:
         print(f"Error in convert_currency: {str(e)}")
         return 0.0
@@ -122,14 +109,12 @@ def convert():
             raise ValueError("Missing required parameters")
 
         result = convert_currency(target_currency=target_currency, amount=float(amount))
-        
 
         return jsonify({"result": result})
     except KeyError as ke:
         return jsonify({"error": f"KeyError: {str(ke)}"}), 500
     except Exception as e:
         return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
-
 
 @app.after_request
 def after_request(response):
