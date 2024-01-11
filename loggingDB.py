@@ -1,3 +1,4 @@
+# The provided code establishes a connection to a PostgreSQL database using the psycopg2 library, checks if the required environment variables for database configuration are set. Additionally, it verifies the existence of the specified user in the PostgreSQL database.
 import psycopg2
 import os
 from dotenv import load_dotenv

@@ -8,8 +8,17 @@ RUN pip install -r requirements.txt
 
 COPY backend.py .
 
+RUN apt-get update && \
+    apt-get install -y libpq-dev && \
+    pip install psycopg2
 
-EXPOSE 5000
+ENV DB_USER=baza
+ENV DB_PASSWORD=password
+ENV DB_HOST=localhost
+ENV DB_NAME=exchange_rates
+ENV DB_PORT=5432
+
+
+# EXPOSE 5000
 
 CMD FLASK_APP=backend python -m flask run --host=0.0.0.0
-
