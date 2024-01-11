@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const App = () => {
   const [amount, setAmount] = useState(1);
   const [result, setResult] = useState('');
   const [targetCurrency, setTargetCurrency] = useState('EUR');
-  const [rates, setRates] = useState({});
-  const apiUrl = process.env.REACT_APP_API_URL || 'http://ccbackend:5000';
 
   const handleAmountChange = (e) => {
     const value = e.target.value;
@@ -22,36 +20,27 @@ const App = () => {
     setTargetCurrency(value);
   };
 
-  const updateResult = async () => {
-    try {
-      const response = await axios.post(`http://localhost:5000/convert`, {
-        targetCurrency,
-        amount: parseFloat(amount),
-      });
 
-      setResult(response.data.result.toFixed(4));
+  const updateResult = useCallback(() => {
+    try {
+      async function fetchResult() {
+        const response = await axios.post(`http://localhost:5000/convert`, {
+          targetCurrency,
+          amount: parseFloat(amount),
+        });
+
+        setResult(response.data.result.toFixed(4));
+      }
+
+      fetchResult();
     } catch (error) {
       console.error('Error:', error);
     }
-  };
+  }, [amount, targetCurrency]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/exchange-rates');
-        const data = await response.data;
-        const euroRate = data['EUR'];
-        const usdRate = data['USD'];
-
-        setRates({ euroRate, usdRate });
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-    
-    fetchData();
     updateResult();
-  }, [amount, targetCurrency]);
+  }, [updateResult]);
 
   return (
     <div>
