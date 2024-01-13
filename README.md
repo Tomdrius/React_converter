@@ -24,10 +24,10 @@ The application will be available at http://localhost:3000 (frontend), and also 
 Creating containers using Docker
 
 Build the container for the backend (Flask):
-docker build -t ccbackend:first . -f Dockerfile.python
+docker build -t backend -f Dockerfile.python .
 
 Build the container for the frontend (React):
-docker build -t ccfrontend:second . -f Dockerfile.node
+docker build -t frontend -f Dockerfile.node .
 
 Run both containers:
 docker compose up
@@ -74,10 +74,10 @@ a także pod adresem http://localhost:5000 (backend).
 Tworzenie kontenerów za pomocą Dockera
 
 Zbuduj kontener dla backendu (Flask):
-docker build -t ccbackend:first . -f Dockerfile.python
+docker build -t backend -f Dockerfile.python .
 
 Zbuduj kontener dla frontendu (React):
-docker build -t ccfrontend:second . -f Dockerfile.node
+docker build -t frontend -f Dockerfile.node .
 
 Uruchom oba kontenery:
 docker compose up

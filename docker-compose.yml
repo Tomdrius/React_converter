@@ -2,25 +2,43 @@ version: '3.9'
 
 services:
   backend:
-    image: ccbackend:first
+    image: backend
     ports:
       - 5000:5000
     environment:
       FLASK_RUN_HOST: 0.0.0.0
-      DB_USER: baza
-      DB_PASSWORD: password
-      DB_HOST: localhost
+      DB_USER: postgres
+      DB_PASSWORD: P:><kol86
+      DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: exchange_rates
+    depends_on:
+      - postgres
     networks:
       - my_network
 
   frontend:
-    image: ccfrontend:second
+    image: frontend
     ports:
       - 3000:3000
+    command: npm start
+    working_dir: /app
+    stdin_open: true
+    tty: true
     environment:
-      REACT_APP_API_URL: http://ccbackend:5000
+      REACT_APP_API_URL: http://backend:5000
+      CHOKIDAR_USEPOLLING: true
+    networks:
+      - my_network
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: P:><kol86
+      POSTGRES_DB: exchange_rates
+    ports:
+      - "5432:5432"
     networks:
       - my_network
 

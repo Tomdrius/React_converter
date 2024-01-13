@@ -73,6 +73,7 @@ def fetch_and_save_data():
 
         for currency, rate in rates.items():
             cursor.execute("INSERT INTO exchange_rates (currency, rate) VALUES (%s, %s)", (currency, rate))
+            print(currency, rate)
         
         connection.commit()
         cursor.execute("SELECT currency, rate FROM exchange_rates")
