@@ -7,8 +7,8 @@ services:
       - 5000:5000
     environment:
       FLASK_RUN_HOST: 0.0.0.0
-      DB_USER: postgres
-      DB_PASSWORD: P:><kol86
+      DB_USER: ${DB_USER_PG}
+      DB_PASSWORD: ${DB_PASSWORD_PG}
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: exchange_rates
@@ -34,8 +34,8 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: P:><kol86
+      POSTGRES_USER: ${DB_USER_PG}
+      POSTGRES_PASSWORD: ${DB_PASSWORD_PG}
       POSTGRES_DB: exchange_rates
     ports:
       - "5432:5432"
