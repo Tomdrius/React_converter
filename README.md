@@ -1,49 +1,48 @@
-This project is a currency converter. It consists of two parts:
+# This project is a currency converter. It consists of two parts:
 
 App.js - a React component that displays the user interface.
+
 Backend.py - a Flask application that provides currency rates.
 
-Running
+## Running
 
-Create and activate a virtual environment:
-python3 -m venv nbp
-source nbp/bin/activate
+1. Create and activate a virtual environment:
+`python3 -m venv nbp`
+`source nbp/bin/activate`
 
-Install the dependencies:
-pip install -r requirements.txt
+2. Install the dependencies: `pip install -r requirements.txt`
 
-Run the Flask application:
-python backend.py
+3. Run the Flask application: `python backend.py`
+4. Run the React application:
+`npm install`
+`npm start`
 
-Run the React application:
-npm install
-npm start
+5. The application will be available at http://localhost:3000 (frontend), and also at http://localhost:5000 (backend).
 
-The application will be available at http://localhost:3000 (frontend), and also at http://localhost:5000 (backend).
+6. Creating containers using Docker
 
-Creating containers using Docker
+7. Build the container for the backend (Flask): `docker build -t backend -f Dockerfile.python .`
 
-Build the container for the backend (Flask):
-docker build -t backend -f Dockerfile.python .
+8. Build the container for the frontend (React): `docker build -t frontend -f Dockerfile.node .`
 
-Build the container for the frontend (React):
-docker build -t frontend -f Dockerfile.node .
+9. Build the container for the frontend (React): `docker build -t frontend -f Dockerfile.node .`
 
-Run both containers:
-docker compose up
+10. Run both containers: `docker compose up`
 
 The application will be available at the previously mentioned addresses.
 
-Database:
-The project uses a PostgreSQL database to store exchange rates. The database is automatically created when the application is run locally. To manually create the database, run the loggingDB.py file.
+## Database:
+The project uses a PostgreSQL database to store exchange rates. The database is automatically created when the application is run locally. To manually create the database, run the loggingDB.py file `python loggingDB.py`
 
-
-
-Rates saving:
+## Rates saving:
 Exchange rates are automatically fetched from the NBP API and saved to the database every 10 minutes.
 
-Information reading:
+## Information reading:
 To read the saved rates from the database, use the appropriate API endpoints.
+
+## License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT)
 
 =======================================================
 
